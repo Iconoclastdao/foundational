@@ -1,0 +1,261 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.ef{display:flex;flex-direction:column;height:590px;font-family:var(--font-sans)}
+.ef-top{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md) var(--border-radius-md) 0 0;font-family:var(--font-mono);font-size:11px}
+.ef-body{display:flex;flex:1;overflow:hidden;border:0.5px solid var(--color-border-tertiary);border-top:none}
+.ef-log{width:43%;border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column}
+.ef-proj{flex:1;display:flex;flex-direction:column}
+.ef-ph{padding:7px 12px;font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);border-bottom:0.5px solid var(--color-border-tertiary);letter-spacing:.07em;display:flex;gap:8px;align-items:center}
+#ef-elog{flex:1;overflow-y:auto}
+.ef-tabs{display:flex;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ef-tab{padding:7px 13px;font-size:10px;font-family:var(--font-mono);color:var(--color-text-tertiary);cursor:pointer;border-bottom:1.5px solid transparent;letter-spacing:.06em;transition:color .15s}
+.ef-tab.on{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
+.ef-pcon{flex:1;overflow-y:auto;padding:10px}
+.ef-pv{display:none}.ef-pv.on{display:block}
+.ef-bot{display:flex;align-items:center;gap:8px;padding:7px 12px;border:0.5px solid var(--color-border-tertiary);border-top:none;border-radius:0 0 var(--border-radius-md) var(--border-radius-md);background:var(--color-background-secondary)}
+.ev{padding:5px 10px;cursor:pointer;border-bottom:0.5px solid var(--color-border-tertiary);animation:evin .18s ease-out;transition:background .12s}
+.ev:hover{background:var(--color-background-secondary)}
+.ev.sel{background:var(--color-background-info)}
+@keyframes evin{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.ev-m{display:flex;align-items:center;gap:5px;margin-bottom:1px}
+.ev-seq{font-family:var(--font-mono);font-size:9px;color:var(--color-text-tertiary);min-width:28px}
+.ev-h{font-family:var(--font-mono);font-size:11px;color:var(--color-text-warning);letter-spacing:-.01em}
+.ev-b{font-size:9px;font-family:var(--font-mono);padding:1px 5px;border-radius:3px;white-space:nowrap}
+.ev-p{font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);padding-left:33px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-v{font-size:9px;margin-left:auto;opacity:0;transition:opacity .3s}
+.chip{font-family:var(--font-mono);font-size:10px;color:var(--color-text-secondary);padding:3px 8px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:4px}
+.tr{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px;animation:fi .25s ease-out}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.th_{font-family:var(--font-mono);font-size:11px;color:var(--color-text-warning)}
+.ts_{font-size:9px;padding:1px 5px;border-radius:3px;font-family:var(--font-mono);margin-left:auto}
+.s-pend{background:var(--color-background-warning);color:var(--color-text-warning)}
+.s-exec{background:var(--color-background-info);color:var(--color-text-info)}
+.s-done{background:var(--color-background-success);color:var(--color-text-success)}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.nc{padding:9px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);animation:fi .25s}
+.ni{font-family:var(--font-mono);font-size:9px;color:var(--color-text-tertiary)}
+.nh{font-family:var(--font-mono);font-size:20px;font-weight:500}
+.ns{font-size:9px;font-family:var(--font-mono)}
+.ok{color:var(--color-text-success)}.lag{color:var(--color-text-warning)}
+.vb{height:5px;border-radius:3px;background:var(--color-background-secondary);margin:4px 0;overflow:hidden}
+.vf{height:100%;background:var(--color-text-info);border-radius:3px;transition:width .5s}
+.lr{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px;font-family:var(--font-mono)}
+.flash{animation:fl .5s ease-out}
+@keyframes fl{0%{background:var(--color-background-warning)}100%{background:transparent}}
+.inv{margin-top:10px;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);line-height:1.5;border-left:2px solid var(--color-border-secondary)}
+</style>
+
+<div class="ef">
+  <div class="ef-top">
+    <span style="font-weight:500;color:var(--color-text-primary);letter-spacing:.06em">EVENT FABRIC</span>
+    <span style="color:var(--color-text-success)">● LIVE</span>
+    <span style="color:var(--color-border-secondary)">|</span>
+    <span style="color:var(--color-text-tertiary)">EPOCH</span>
+    <span id="epoch" style="color:var(--color-text-primary)">0</span>
+    <span style="color:var(--color-text-tertiary)">HEAD</span>
+    <span id="head" style="color:var(--color-text-warning)">00000000</span>
+    <span style="margin-left:auto;color:var(--color-text-tertiary)">← all state is a projection of this chain</span>
+  </div>
+
+  <div class="ef-body">
+    <div class="ef-log">
+      <div class="ef-ph">APPEND-ONLY LOG <span id="lc" style="color:var(--color-text-primary)">0</span> EVENTS</div>
+      <div id="ef-elog"></div>
+    </div>
+    <div class="ef-proj">
+      <div class="ef-tabs">
+        <div class="ef-tab on" onclick="st('compute',this)">COMPUTE</div>
+        <div class="ef-tab" onclick="st('nodes',this)">NODES</div>
+        <div class="ef-tab" onclick="st('gov',this)">GOVERNANCE</div>
+        <div class="ef-tab" onclick="st('ledger',this)">LEDGER</div>
+      </div>
+      <div class="ef-pcon">
+        <div class="ef-pv on" id="v-compute"></div>
+        <div class="ef-pv" id="v-nodes"></div>
+        <div class="ef-pv" id="v-gov"></div>
+        <div class="ef-pv" id="v-ledger"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ef-bot">
+    <button onclick="replay()">↺ REPLAY</button>
+    <button onclick="manualEmit()">+ EMIT</button>
+    <span style="flex:1"></span>
+    <div class="chip">CHAIN <span id="clen">0</span></div>
+    <div class="chip">VERIFIED <span id="vct">0</span></div>
+    <div class="chip">NODES 4</div>
+  </div>
+</div>
+
+<script>
+const evts=[], S={tasks:{},nodes:{},props:{},bal:{},tid:1};
+let vct=0, aSel=null, aTab='compute', aTimer=null, hSeed=Math.floor(Math.random()*0xffffff), aSeq=0;
+
+['alpha','beta','gamma','delta'].forEach(id=>S.nodes[id]={id,h:0,lag:0});
+['alice','bob','carol','dao'].forEach((a,i)=>S.bal[a]=1000+i*250);
+
+function mh(){let h=(++hSeed*0x811c9dc5)^0xdeadbeef;for(let i=0;i<4;i++)h=((h>>>16)^h)*0x45d9f3b>>>0;return h.toString(16).padStart(8,'0').slice(0,8)}
+function dh(s){let h=(s*0x45d9f3b)>>>0;for(let i=0;i<3;i++)h=((h>>>13)^h)*0x21d7 >>>0;return h.toString(16).padStart(8,'0').slice(0,6)}
+const NIDS=['alpha','beta','gamma','delta'];
+const ADDS=['alice','bob','carol'];
+
+const ET=[
+  {t:'TASK_SUBMIT',c:'info',g:()=>{const id=`T${S.tid++}`;return{id,fn:['map_reduce','zkprove','gradient','sha256','sort'][Math.floor(Math.random()*5)],inp:mh().slice(0,6)}}},
+  {t:'COMPUTE_ALLOC',c:'info',g:()=>{const p=Object.values(S.tasks).filter(x=>x.st==='pending');if(!p.length)return null;const t=p[Math.floor(Math.random()*p.length)],n=NIDS[Math.floor(Math.random()*4)];return{tid:t.id,node:n,cpu:Math.floor(Math.random()*4)+1}}},
+  {t:'RESULT_COMMIT',c:'success',g:()=>{const p=Object.values(S.tasks).filter(x=>x.st==='executing');if(!p.length)return null;const t=p[Math.floor(Math.random()*p.length)];return{tid:t.id,rh:mh()}}},
+  {t:'NODE_SYNC',c:'purple',g:()=>({nid:NIDS[Math.floor(Math.random()*4)],h:evts.length,lag:Math.floor(Math.random()*3)})},
+  {t:'PROPOSAL_OPEN',c:'warning',g:()=>{const n=Object.keys(S.props).length+1;return{pid:`P${n}`,desc:`upgrade-${mh().slice(0,4)}`,q:3}}},
+  {t:'VOTE_CAST',c:'warning',g:()=>{const pk=Object.keys(S.props);const pid=pk.length?pk[Math.floor(Math.random()*pk.length)]:'P1';const v=ADDS[Math.floor(Math.random()*3)];return{pid,voter:v,vote:Math.random()>.3?'yes':'no'}}},
+  {t:'TRANSFER',c:'coral',g:()=>{const f=ADDS[Math.floor(Math.random()*3)],t=ADDS.find(a=>a!==f)||'dao',a=Math.floor(Math.random()*60)+10;return(S.bal[f]||0)<a?null:{from:f,to:t,amt:a}}},
+  {t:'CHECKPOINT',c:'gray',g:()=>({sr:mh(),h:evts.length})},
+];
+
+const SEQ=['TASK_SUBMIT','TASK_SUBMIT','COMPUTE_ALLOC','COMPUTE_ALLOC','RESULT_COMMIT','NODE_SYNC','PROPOSAL_OPEN','TASK_SUBMIT','VOTE_CAST','TRANSFER','COMPUTE_ALLOC','RESULT_COMMIT','VOTE_CAST','NODE_SYNC','CHECKPOINT','TASK_SUBMIT','TRANSFER','VOTE_CAST','RESULT_COMMIT','NODE_SYNC'];
+
+const CM={info:{bg:'var(--color-background-info)',tx:'var(--color-text-info)'},success:{bg:'var(--color-background-success)',tx:'var(--color-text-success)'},warning:{bg:'var(--color-background-warning)',tx:'var(--color-text-warning)'},coral:{bg:'var(--color-background-danger)',tx:'var(--color-text-danger)'},purple:{bg:'var(--color-background-secondary)',tx:'var(--color-text-primary)'},gray:{bg:'var(--color-background-secondary)',tx:'var(--color-text-tertiary)'}};
+
+function ps(t,p){
+  if(t==='TASK_SUBMIT')return`id=${p.id} fn=${p.fn} inp=${p.inp}`;
+  if(t==='COMPUTE_ALLOC')return`${p.tid} → node:${p.node} cpu:${p.cpu}`;
+  if(t==='RESULT_COMMIT')return`${p.tid} result=${p.rh}`;
+  if(t==='NODE_SYNC')return`node:${p.nid} h=${p.h} lag=${p.lag}`;
+  if(t==='PROPOSAL_OPEN')return`${p.pid} ${p.desc} quorum=${p.q}`;
+  if(t==='VOTE_CAST')return`${p.voter} → ${p.pid}:${p.vote}`;
+  if(t==='TRANSFER')return`${p.from} → ${p.to} amt=◈${p.amt}`;
+  if(t==='CHECKPOINT')return`root=${p.sr} h=${p.h}`;
+  if(t==='GENESIS')return`chainId=${p.chainId} v=${p.v}`;
+  return'';
+}
+
+function apply(e){
+  const{t,p}=e;
+  if(t==='TASK_SUBMIT')S.tasks[p.id]={id:p.id,fn:p.fn,st:'pending'};
+  else if(t==='COMPUTE_ALLOC'&&S.tasks[p.tid]){S.tasks[p.tid].st='executing';S.tasks[p.tid].node=p.node}
+  else if(t==='RESULT_COMMIT'&&S.tasks[p.tid]){S.tasks[p.tid].st='committed';S.tasks[p.tid].rh=p.rh}
+  else if(t==='NODE_SYNC'&&S.nodes[p.nid]){S.nodes[p.nid].h=p.h;S.nodes[p.nid].lag=p.lag}
+  else if(t==='PROPOSAL_OPEN')S.props[p.pid]={pid:p.pid,desc:p.desc,q:p.q,yes:0,no:0,vd:{}}
+  else if(t==='VOTE_CAST'&&S.props[p.pid]&&!S.props[p.pid].vd[p.voter]){S.props[p.pid].vd[p.voter]=p.vote;S.props[p.pid][p.vote]++}
+  else if(t==='TRANSFER'&&(S.bal[p.from]||0)>=p.amt){S.bal[p.from]-=p.amt;S.bal[p.to]=(S.bal[p.to]||0)+p.amt}
+}
+
+function emit(def,op){
+  const pl=op||(def?def.g():null);
+  if(!pl)return false;
+  const ph=evts.length?evts[evts.length-1].hash:'00000000';
+  const e={seq:evts.length,hash:mh(),ph,t:def?def.t:'GENESIS',c:def?def.c:'gray',p:pl,ts:Date.now(),ver:false};
+  evts.push(e);apply(e);
+  document.getElementById('head').textContent=e.hash;
+  document.getElementById('epoch').textContent=Math.floor(evts.length/5);
+  document.getElementById('lc').textContent=evts.length;
+  document.getElementById('clen').textContent=evts.length;
+  renderRow(e);
+  setTimeout(()=>{e.ver=true;vct++;document.getElementById('vct').textContent=vct;const el=document.getElementById(`ev${e.seq}`);if(el){const v=el.querySelector('.ev-v');if(v){v.textContent='✓';v.style.opacity='1';v.style.color='var(--color-text-success)'}}},500+Math.random()*500);
+  upAll();return true;
+}
+
+function renderRow(e){
+  const log=document.getElementById('ef-elog');
+  const c=CM[e.c]||CM.gray;
+  const r=document.createElement('div');
+  r.className='ev';r.id=`ev${e.seq}`;
+  r.onclick=()=>selEv(e.seq);
+  r.innerHTML=`<div class="ev-m"><span class="ev-seq">#${String(e.seq).padStart(4,'0')}</span><span class="ev-h">${e.hash}</span><span class="ev-b" style="background:${c.bg};color:${c.tx}">${e.t}</span><span class="ev-v"></span></div><div class="ev-p">${ps(e.t,e.p)}</div>`;
+  log.appendChild(r);log.scrollTop=log.scrollHeight;
+}
+
+function selEv(seq){
+  if(aSel!==null){const p=document.getElementById(`ev${aSel}`);if(p)p.classList.remove('sel')}
+  aSel=seq;const el=document.getElementById(`ev${seq}`);if(el)el.classList.add('sel');
+}
+
+function st(tab,el){
+  aTab=tab;
+  document.querySelectorAll('.ef-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.ef-pv').forEach(v=>v.classList.remove('on'));
+  document.getElementById(`v-${tab}`).classList.add('on');
+}
+
+function upAll(){upC();upN();upG();upL()}
+
+function upC(){
+  const el=document.getElementById('v-compute');
+  const tasks=Object.values(S.tasks).slice(-14).reverse();
+  if(!tasks.length){el.innerHTML='<div style="color:var(--color-text-tertiary);font-size:11px;font-family:var(--font-mono);padding:6px">awaiting TASK_SUBMIT events…</div>';return}
+  el.innerHTML=`<div style="font-size:9px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:5px;letter-spacing:.06em">DERIVED STATE — ${tasks.length} TASKS</div>`+
+  tasks.map(t=>`<div class="tr"><span class="th_">${t.id}</span><span style="font-size:10px;color:var(--color-text-secondary);font-family:var(--font-mono)">${t.fn}</span>${t.node?`<span style="font-size:9px;color:var(--color-text-tertiary);font-family:var(--font-mono)">@${t.node}</span>`:''}<span class="ts_ s-${t.st==='committed'?'done':t.st==='executing'?'exec':'pend'}">${t.st.toUpperCase()}</span></div>`).join('')+
+  `<div class="inv">f(events[0..n]) → compute_state<br>replay to identical output. no privileged "now".</div>`;
+}
+
+function upN(){
+  const el=document.getElementById('v-nodes');
+  const mx=Math.max(...Object.values(S.nodes).map(n=>n.h),0);
+  el.innerHTML=`<div style="font-size:9px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:7px;letter-spacing:.06em">CONVERGENT STATE — LOG HEAD:${mx}</div><div class="ng">`+
+  Object.values(S.nodes).map(n=>{const lag=mx-n.h,ok=lag<=1;return`<div class="nc"><div class="ni">node:${n.id}</div><div class="nh">${n.h}</div><div class="ns ${ok?'ok':'lag'}">${ok?'✓ SYNCED':`⚡ LAG +${lag}`}</div><div style="margin-top:5px;height:3px;border-radius:2px;background:var(--color-background-secondary);overflow:hidden"><div style="height:100%;border-radius:2px;background:${ok?'var(--color-text-success)':'var(--color-text-warning)'};width:${mx>0?Math.round(n.h/mx*100):100}%;transition:width .5s"></div></div></div>`}).join('')+
+  `</div><div class="inv">consistency emerges from shared log agreement,<br>not central coordination.</div>`;
+}
+
+function upG(){
+  const el=document.getElementById('v-gov');
+  const ps=Object.values(S.props);
+  if(!ps.length){el.innerHTML='<div style="color:var(--color-text-tertiary);font-size:11px;font-family:var(--font-mono);padding:6px">awaiting PROPOSAL_OPEN events…</div>';return}
+  el.innerHTML=`<div style="font-size:9px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:6px;letter-spacing:.06em">POLICY STATE — ${ps.length} PROPOSALS</div>`+
+  ps.map(p=>{const tot=p.yes+p.no,pct=tot>0?Math.round(p.yes/tot*100):0,pass=p.yes>=p.q;return`<div style="padding:8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:6px;background:var(--color-background-primary)"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><span style="font-family:var(--font-mono);font-size:12px;font-weight:500">${p.pid}</span><span style="font-family:var(--font-mono);font-size:9px;color:var(--color-text-tertiary)">${p.desc}</span>${pass?'<span style="font-size:9px;color:var(--color-text-success);margin-left:auto">PASSED</span>':''}</div><div class="vb"><div class="vf" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:9px;font-family:var(--font-mono);color:var(--color-text-tertiary)"><span>YES ${p.yes}/${p.q}</span><span>${pct}%</span><span>NO ${p.no}</span></div></div>`}).join('')+
+  `<div class="inv">governance = constraints on event validity.<br>"permissions" are state machine rules.</div>`;
+}
+
+function upL(){
+  const el=document.getElementById('v-ledger');
+  const bs=Object.entries(S.bal);
+  el.innerHTML=`<div style="font-size:9px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:5px;letter-spacing:.06em">SETTLEMENT STATE — ${bs.length} ACCOUNTS</div>`+
+  bs.map(([a,b])=>`<div class="lr"><span style="min-width:44px">${a}</span><span style="font-size:9px;color:var(--color-text-tertiary)">${dh(a.charCodeAt(0)*17+3)}</span><span style="margin-left:auto;font-weight:500;color:${b>=1000?'var(--color-text-success)':b>=500?'var(--color-text-primary)':'var(--color-text-warning)'}">◈ ${b}</span></div>`).join('')+
+  `<div class="inv">wallet + settlement = native state transitions.<br>TRANSFER is just an append to the log.</div>`;
+}
+
+function sched(){aTimer=setTimeout(()=>{const tn=SEQ[aSeq%SEQ.length];aSeq++;const def=ET.find(e=>e.t===tn);if(def)emit(def);sched()},1600+Math.random()*1200)}
+
+function replay(){
+  clearTimeout(aTimer);
+  const saved=[...evts];
+  evts.length=0;Object.keys(S.tasks).forEach(k=>delete S.tasks[k]);Object.keys(S.props).forEach(k=>delete S.props[k]);
+  S.tid=1;vct=0;
+  ['alpha','beta','gamma','delta'].forEach(id=>S.nodes[id]={id,h:0,lag:0});
+  ['alice','bob','carol','dao'].forEach((a,i)=>S.bal[a]=1000+i*250);
+  document.getElementById('ef-elog').innerHTML='';
+  document.getElementById('head').textContent='00000000';
+  document.getElementById('epoch').textContent='0';
+  document.getElementById('lc').textContent='0';
+  document.getElementById('clen').textContent='0';
+  document.getElementById('vct').textContent='0';
+  upAll();
+  let d=0;
+  saved.forEach((se,i)=>{d+=100;setTimeout(()=>{
+    const ph=evts.length?evts[evts.length-1].hash:'00000000';
+    const ne={...se,seq:evts.length,ph};
+    evts.push(ne);apply(ne);
+    document.getElementById('head').textContent=ne.hash;
+    document.getElementById('epoch').textContent=Math.floor(evts.length/5);
+    document.getElementById('lc').textContent=evts.length;
+    document.getElementById('clen').textContent=evts.length;
+    renderRow(ne);upAll();
+    if(i===saved.length-1)sched();
+  },d)});
+}
+
+function manualEmit(){const opts=['TASK_SUBMIT','TRANSFER','VOTE_CAST','NODE_SYNC'];const tn=opts[Math.floor(Math.random()*opts.length)];const def=ET.find(e=>e.t===tn);if(def)emit(def)}
+
+(function init(){
+  const g={seq:0,hash:'c0ffee00',ph:'00000000',t:'GENESIS',c:'gray',p:{chainId:'mainnet',v:'1.0.0'},ts:Date.now(),ver:true};
+  evts.push(g);renderRow(g);
+  document.getElementById('head').textContent=g.hash;
+  document.getElementById('lc').textContent='1';
+  document.getElementById('clen').textContent='1';
+  setTimeout(()=>{const el=document.getElementById('ev0');if(el){const v=el.querySelector('.ev-v');if(v){v.textContent='✓';v.style.opacity='1';v.style.color='var(--color-text-success)'}}},200);
+  const boot=['TASK_SUBMIT','TASK_SUBMIT','PROPOSAL_OPEN','COMPUTE_ALLOC','TRANSFER'];
+  let bd=200;
+  boot.forEach(tn=>{bd+=350;setTimeout(()=>{const def=ET.find(e=>e.t===tn);if(def)emit(def)},bd)});
+  setTimeout(sched,bd+600);upAll();
+})();
+</script>
